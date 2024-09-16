@@ -1,0 +1,34 @@
+1) SELECT dr."DeliveryCity", 
+       AVG((dsc."LoadDate"-dr."LoadDate")) AS avg_hours
+FROM "DeliveryRequests" dr 
+JOIN "DeliveryStatusCurrent" dsc 
+  ON dr."InternalId" = dsc."InternalId" 
+WHERE dsc."StatusName" = 'Done'
+GROUP BY dr."DeliveryCity";
+
+Набережные Челны	1 day 34:05:32.286821
+Зеленодольск	2 days 11:57:44.678571
+Нижнекамск	1 day 32:16:39.226415
+Альметьевск	1 day 30:41:33.865385
+Казань	1 day 34:16:03.571428
+
+2) select dsc."StatusName", count(*) from "DeliveryRequests" dr 
+join "DeliveryStatusCurrent" dsc ON dr."InternalId" = dsc."InternalId"
+where dr."PackageType" IN ('Письмо', 'Бандероль')
+	and dr."LoadDate" >= current_date - interval '3 weeks'
+group by dsc."StatusName" ;
+
+New	6
+In Progress	1
+Cancelled	3
+Handed to courier	6
+Done	7
+
+3) select dr."PackageType" , dsh."StatusName"  from "DeliveryStatusCurrent" dsc 
+join "DeliveryRequests" dr  on dsc."InternalId" = dr."InternalId" 
+join "DeliveryStatusHistory" dsh on dsh."InternalId" = dr."InternalId" 
+where dsc."StatusName"  = 'Done' and dr."DeliveryCity" = 'Казань'
+group by dr."PackageType", dsh."StatusName"
+order by dr."PackageType" ; 
+
+не удается посчитать время
